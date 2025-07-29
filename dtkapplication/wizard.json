@@ -12,10 +12,9 @@
     "options":
     [
         { "key": "ProjectFile", "value": "%{JS: '%{BuildSystem}' === 'qmake' ? '%{ProFile}' : '%{CMakeFile}'}"},
-        { "key": "ProFile", "value": "%{JS: Util.fileName('%{ProjectDirectory}/%{ProjectName}', 'pro')}" },
-        { "key": "QbsFile", "value": "%{JS: Util.fileName('%{ProjectDirectory}/%{ProjectName}', 'qbs')}" },
-        { "key": "CMakeFile", "value": "%{ProjectDirectory}/CMakeLists.txt" },
-        { "key": "CppFileName", "value": "%{JS: 'main.' + Util.preferredSuffix('text/x-c++src')}" }
+        { "key": "ProFile", "value": "%{JS: Util.fileName('%{ProjectDirectory}/%{ProjectName}.pro', 'pro')}"},
+        { "key": "CMakeFile", "value": "%{ProjectDirectory}/CMakeLists.txt"},
+        { "key": "CppFileName", "value": "%{JS: 'main.' + Util.preferredSuffix('text/x-c++src')}"}
     ],
 
     "pages":
@@ -29,7 +28,6 @@
             "trDisplayName": "Define Build System",
             "trShortTitle": "Build System",
             "typeId": "Fields",
-            "enabled": "%{JS: ! %{IsSubproject}}",
             "data":
             [
                 {
@@ -42,16 +40,31 @@
                         "items":
                         [
                             {
-                                "trKey": "qmake",
-                                "value": "qmake",
-                                "condition": "%{JS: [ %{Plugins} ].indexOf('QmakeProjectManager') >= 0}"
+                                "trKey": "CMake",
+                                "value": "cmake"
                             },
                             {
-                                "trKey": "CMake",
-                                "value": "cmake",
-                                "condition": "%{JS: [ %{Plugins} ].indexOf('CMakeProjectManager') >= 0}"
+                                "trKey": "qmake",
+                                "value": "qmake"
                             }
                         ]
+                    }
+                }
+            ]
+        },
+        {
+            "trDisplayName": "Define Qt Version",
+            "trShortTitle": "Qt Version",
+            "typeId": "Fields",
+            "data":
+            [
+                {
+                    "name": "UseQt6",
+                    "trDisplayName": "Use Qt 6:",
+                    "type": "CheckBox",
+                    "data":
+                    {
+                        "checked": true
                     }
                 }
             ]
@@ -69,6 +82,7 @@
             "typeId": "Summary"
         }
     ],
+
     "generators":
     [
         {
@@ -78,19 +92,14 @@
                 {
                     "source": "file.pro",
                     "target": "%{ProFile}",
-                    "openAsProject": true,
-                    "condition": "%{JS: '%{BuildSystem}' === 'qmake'}"
+                    "condition": "%{JS: '%{BuildSystem}' === 'qmake'}",
+                    "openAsProject": true
                 },
                 {
                     "source": "CMakeLists.txt",
-                    "openAsProject": true,
-                    "condition": "%{JS: '%{BuildSystem}' === 'cmake'}"
-                },
-                {
-                    "source": "resources.qrc"
-                },
-                {
-                    "source": "images/logo.svg"
+                    "target": "CMakeLists.txt",
+                    "condition": "%{JS: '%{BuildSystem}' === 'cmake'}",
+                    "openAsProject": true
                 },
                 {
                     "source": "main.cpp",
@@ -98,9 +107,12 @@
                     "openInEditor": true
                 },
                 {
-                    "source": "../git.ignore",
-                    "target": ".gitignore",
-                    "condition": "%{JS: ! %{IsSubproject} && '%{VersionControl}' === 'G.Git'}"
+                    "source": "resources.qrc",
+                    "target": "resources.qrc"
+                },
+                {
+                    "source": "images/logo.svg",
+                    "target": "images/logo.svg"
                 }
             ]
         }

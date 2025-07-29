@@ -1,3 +1,9 @@
+qtcreator-template-dtk (1.1.0.2) unstable; urgency=medium
+
+  * feat: add Qt6 support for DTK application template
+
+ -- YeShanShan <yeshanshan@uniontech.com>  Tue, 29 Jul 2025 13:05:50 +0800
+
 qtcreator-template-dtk (1.1.0.1) UNRELEASED; urgency=medium
 
   * update

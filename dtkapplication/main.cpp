@@ -1,19 +1,25 @@
 #include <DApplication>
 #include <DMainWindow>
 #include <DWidgetUtil>
-#include <DApplicationSettings>
 #include <DTitlebar>
 #include <DProgressBar>
 #include <DFontSizeManager>
 
 #include <QPropertyAnimation>
 #include <QDate>
-#include <QLayout>
+#include <QVBoxLayout>
+#include <QWidget>
+#include <QIcon>
+#include <QSize>
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+
     DApplication a(argc, argv);
     a.setOrganizationName("deepin");
     a.setApplicationName("dtk-application");
@@ -24,10 +30,6 @@ int main(int argc, char *argv[])
 
     a.loadTranslator();
     a.setApplicationDisplayName(QCoreApplication::translate("Main", "DTK Application"));
-
-    // 保存程序的窗口主题设置
-    DApplicationSettings as;
-    Q_UNUSED(as)
 
     DMainWindow w;
     w.titlebar()->setIcon(QIcon(":/images/logo.svg"));
@@ -40,10 +42,11 @@ int main(int argc, char *argv[])
     QDate today = QDate::currentDate();
     DProgressBar *yearProgressBar = new DProgressBar();
     yearProgressBar->setMaximum(today.daysInYear());
+    
     // 绑定字体大小
     DFontSizeManager::instance()->bind(yearProgressBar, DFontSizeManager::T1);
-
     yearProgressBar->setAlignment(Qt::AlignCenter);
+    
     QObject::connect(yearProgressBar, &DProgressBar::valueChanged, yearProgressBar, [yearProgressBar](int value){
         yearProgressBar->setFormat(QString("您的 %1 使用进度： %2%").arg(QDate::currentDate().year())
                                    .arg(value * 100 / yearProgressBar->maximum()));
